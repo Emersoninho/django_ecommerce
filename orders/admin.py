@@ -6,7 +6,7 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name', 'email', 'city', 'created')
     list_filter = ('created',)
 
-class OrderItemInline(admin.ModelAdmin):
+class OrderItemInline(admin.TabularInline):
     model = OrderItem
     raw_id_fields = ('product',)
 

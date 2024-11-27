@@ -1,2 +1,13 @@
 <h1>Order Created</h1>
-<p>Thank you for your purchase! your order ID is {{ order.id }}</p>
+<p>Thank you for your purchase! Your order ID is {{ order.id }}.</p>
+
+<h2>Order Summary:</h2>
+<ul>
+    {% for item in order.items.all %}
+        <li>
+            {{ item.product.name }} - {{ item.quantity }} x {{ item.price }} = {{ item.get_cost }}
+        </li>
+    {% endfor %}
+</ul>
+
+<p><strong>Total:</strong> {{ order.items.all|sum:'get_cost' }}</p>

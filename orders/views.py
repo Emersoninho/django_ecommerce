@@ -19,7 +19,7 @@ def order_create(request):
                 )
             # limpar o carrinho após o pedido
             cart.clear()
-            return redirect('orders:order_create', order_id=order.id)
+            return redirect('orders:order_created', order_id=order.id)
     else:
         form = AddressForm()
         return render(request, 'orders/order_create.html', {'cart': cart, 'form': form})
