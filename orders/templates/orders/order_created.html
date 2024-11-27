@@ -1,6 +1,31 @@
-<h1>Pedido Criado com Sucesso</h1>
-<p>Obrigado por sua compra!</p>
-<p><strong>ID do Pedido:</strong> {{ order.id }}</p>
-<p><strong>Total:</strong> R$ {{ order.get_total_cost }}</p>
-<a href="{% url 'product_list' %}" class="btn btn-primary">Continuar Comprando</a>
+<!-- orders/templates/orders/order_created.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Pedido</title>
+</head>
+<body>
+    <h1>Pedido Confirmado!</h1>
+    <p>Obrigado pela sua compra! Seu pedido foi registrado com sucesso.</p>
+    
+    <h2>Detalhes do Pedido</h2>
+    <p><strong>ID do Pedido:</strong> {{ order.id }}</p>
+    <p><strong>Endereço de Entrega:</strong> {{ order.address }}</p>
+    <p><strong>Status do Pedido:</strong> {% if order.paid %} Pago {% else %} Pendente {% endif %}</p>
+    
+    <h3>Itens do Pedido:</h3>
+    <ul>
+        {% for item in order.orderitem_set.all %}
+            <li>{{ item.product.name }} - {{ item.quantity }} x R${{ item.price }}</li>
+        {% endfor %}
+    </ul>
+    
+    <p><strong>Total:</strong> R${{ order.total_price }}</p>
+
+    <h3>Método de Pagamento:</h3>
+    <p>{{ order.payment_method }}</p>
+</body>
+</html>
 
