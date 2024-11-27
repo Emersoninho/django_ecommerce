@@ -1,13 +1,6 @@
-<h1>Order Created</h1>
-<p>Thank you for your purchase! Your order ID is {{ order.id }}.</p>
+<h1>Pedido Criado com Sucesso</h1>
+<p>Obrigado por sua compra!</p>
+<p><strong>ID do Pedido:</strong> {{ order.id }}</p>
+<p><strong>Total:</strong> R$ {{ order.get_total_cost }}</p>
+<a href="{% url 'product_list' %}" class="btn btn-primary">Continuar Comprando</a>
 
-<h2>Order Summary:</h2>
-<ul>
-    {% for item in order.items.all %}
-        <li>
-            {{ item.product.name }} - {{ item.quantity }} x {{ item.price }} = {{ item.get_cost }}
-        </li>
-    {% endfor %}
-</ul>
-
-<p><strong>Total:</strong> {{ order.items.all|sum:'get_cost' }}</p>
