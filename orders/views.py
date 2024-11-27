@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Order, OrderItem, Address
-from .forms import OrderForm, AddressForm
+from .forms import AddressForm
 from cart.cart import Cart
 
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
-        form = OrderForm(request.POST)
+        form = AddressForm(request.POST)
         if form.is_valid():
             address = form.save()
             order = Order.objects.create(address=address)

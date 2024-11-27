@@ -1,0 +1,6 @@
+<h1>Checkout</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as+p }}
+    <button type="submit">Place Order</button>
+</form>
