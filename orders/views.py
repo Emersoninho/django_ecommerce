@@ -3,6 +3,7 @@ from .models import Order, OrderItem
 from .forms import AddressForm
 from cart.cart import Cart
 from .utils import process_payment_with_mercadopago
+from django.conf import settings
 
 def order_create(request):
     cart = Cart(request)
@@ -11,6 +12,13 @@ def order_create(request):
         if form.is_valid():
             address = form.save()
             order = Order.objects.create(address=address)
+
+            # verificar se a cidade do endereço é a mesma da loja
+            if address.city == 'Paudalho':
+                order.shipping_cost = 0.00 # frete grátis
+            else:
+                order.shipping_cost = 5.00 # frete cobrado
+
             
             # Criação dos itens do pedido
             for item in cart:
@@ -22,16 +30,15 @@ def order_create(request):
                 )
 
             payment_method = request.POST.get('payment_method')
-            # Processa o pagamento com Mercado Pago
-            payment_url = process_payment_with_mercadopago(order, payment_method)
-            
-            if payment_url:
-                # Redireciona para a URL de pagamento do Mercado Pago
-                return redirect(payment_url)
-            else:
-                # Exibe erro se algo deu errado
-                return render(request, 'orders/payment_error.html', {'error': 'Erro ao processar o pagamento'})
+            payment_response = process_payment_with_mercadopago(order, payment_method)
 
+            if "id" in payment_response:
+                order.paid = True
+                order.save()
+                cart.clear()
+                return redirect('orders:order_created', order_id=order.id)
+            else:
+                return render(request, 'orders/payment_error.html', {'error': 'Erro ao processar o pagamento'})
     else:
         form = AddressForm()
 

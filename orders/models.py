@@ -8,7 +8,7 @@ class Address(models.Model):
     address = models.CharField(max_length=250)
     city = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
-
+    
     def __str__(self):
         return f'{self.first_name} {self.last_name} - {self.city}'
     
@@ -17,9 +17,14 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=True)
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f'{self.id}'
+        return f'Order #{self.id}'
+    
+    def get_total_cost(self):
+        total = sum(item.get_cost() for item in self.items.all())
+        return total + self.shipping_cost
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
