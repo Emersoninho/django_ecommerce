@@ -1,31 +1,34 @@
-<!-- orders/templates/orders/order_created.html -->
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Pedido</title>
+    <title>Order Confirmation</title>
 </head>
 <body>
-    <h1>Pedido Confirmado!</h1>
-    <p>Obrigado pela sua compra! Seu pedido foi registrado com sucesso.</p>
-    
+    <h1>Pedido Confirmado</h1>
+    <p>Obrigado por sua compra!</p>
     <h2>Detalhes do Pedido</h2>
-    <p><strong>ID do Pedido:</strong> {{ order.id }}</p>
-    <p><strong>Endereço de Entrega:</strong> {{ order.address }}</p>
-    <p><strong>Status do Pedido:</strong> {% if order.paid %} Pago {% else %} Pendente {% endif %}</p>
-    
+    <ul>
+        <li><strong>ID do Pedido:</strong> {{ order.id }}</li>
+        <li><strong>Data:</strong> {{ order.created }}</li>
+        <li><strong>Total:</strong> R$ {{ order.get_total_cost }}</li>
+        <li><strong>Endereço:</strong> {{ order.address }}</li>
+        <li><strong>Status:</strong>
+            {% if order.paid %}
+                Pago
+            {% else %}
+                Pendente
+            {% endif %}
+        </li>
+    </ul>
     <h3>Itens do Pedido:</h3>
     <ul>
-        {% for item in order.orderitem_set.all %}
-            <li>{{ item.product.name }} - {{ item.quantity }} x R${{ item.price }}</li>
+        {% for item in order.items.all %}
+        <li>{{ item.product.name }} - {{ item.quantity }} x R$ {{ item.price }} = R$ {{ item.get_cost }}</li>
         {% endfor %}
     </ul>
-    
-    <p><strong>Total:</strong> R${{ order.total_price }}</p>
-
-    <h3>Método de Pagamento:</h3>
-    <p>{{ order.payment_method }}</p>
 </body>
 </html>
+
 

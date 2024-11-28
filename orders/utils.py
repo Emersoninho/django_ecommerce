@@ -7,6 +7,9 @@ def process_payment_with_mercadopago(order, payment_method):
     # Calcular total
     total = sum(item.get_cost() for item in order.items.all())
 
+    # URL base do site
+    site_url = settings.SITE_URL
+
     # Criação da preferência de pagamento
     preference_data = {
         'items': [
@@ -23,7 +26,13 @@ def process_payment_with_mercadopago(order, payment_method):
         'payment_methods': {
             'excluded_payment_types': [],
             'installments': 1,  # Parcelas
-        }
+        },
+        'back_urls': {
+            'success': f'{site_url}/orders/created/{order.id}/',
+            'failure': f'{site_url}/orders/create/',
+            'pending': f'{site_url}/orders/created/{order.id}',
+        },
+        'auto_return': 'approved', # retorna automaticamente para a url de sucesso
     }
 
     # Condições para tipos de pagamento excluídos
