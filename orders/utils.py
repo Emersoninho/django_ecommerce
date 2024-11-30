@@ -1,5 +1,6 @@
 import mercadopago  # type: ignore
 from django.conf import settings
+import googlemaps
 
 def process_payment_with_mercadopago(order, payment_method):
     sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
@@ -52,3 +53,31 @@ def process_payment_with_mercadopago(order, payment_method):
     else:
         # Caso a criação da preferência falhe
         return None
+    
+def calculate_distance(origin, destination):
+    gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
+
+    try:
+        directions_result = gmaps.distance_matrix(
+            origins=[origin],
+            destinations=[destination],
+            mode="driving"
+        )
+        
+        # Verifique a resposta
+        print(f"Resposta da API do Google Maps: {directions_result}")
+        
+        # Extrair a distância em metros (se disponível)
+        distance_data = directions_result['rows'][0]['elements'][0]
+        
+        if 'distance' in distance_data:
+            distance = distance_data['distance']['value'] / 1000  # Converte para km
+            duration = distance_data['duration']['value'] / 60  # Tempo em minutos
+            print(f"Distância: {distance} km, Duração: {duration} minutos")
+            return distance, duration
+        else:
+            print("Erro: distância não encontrada na resposta.")
+            return None, None
+    except Exception as e:
+        print(f"Erro ao calcular a distância: {e}")
+        return None, None

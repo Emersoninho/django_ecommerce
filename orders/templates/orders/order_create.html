@@ -1,6 +1,40 @@
-<h1>Checkout</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Place Order</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Pedido</title>
+</head>
+<body>
+    <h1>Criar Pedido</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <h2>Itens no Carrinho</h2>
+        <ul>
+            {% for item in cart %}
+                <li>
+                    {{ item.quantity }} x {{ item.product.name }} - R$ {{ item.price }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h3>Escolha o Método de Pagamento</h3>
+        <label>
+            <input type="radio" name="payment_method" value="pix"> Pix
+        </label>
+        <label>
+            <input type="radio" name="payment_method" value="boleto"> Boleto
+        </label>
+        <label>
+            <input type="radio" name="payment_method" value="credit_card"> Cartão de Crédito
+        </label>
+
+        <h3>Frete</h3>
+        <p>Valor do frete: R$ {{ order.shipping_cost }}</p>
+
+        <button type="submit">Finalizar Pedido</button>
+    </form>
+</body>
+</html>

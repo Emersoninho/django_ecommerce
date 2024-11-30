@@ -4,5 +4,4 @@ from .models import Address
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['first_name', 'last_name', 'email', 'address_line', 'city']
-        
+        fields = ['first_name', 'last_name', 'email', 'address_line', 'city', 'state']

@@ -17,6 +17,8 @@
         <li><strong>Endereço:</strong> {{ order.address.address_line }}</li>
         <li><strong>Cidade:</strong>{{ order.address.city }}</li>
         <li><strong>Status:</strong>
+        <p><strong>Frete estimado:</strong> R$ <span id="shipping-cost">0.00</span></p>
+
             {% if order.paid %}
                 Pago
             {% else %}
