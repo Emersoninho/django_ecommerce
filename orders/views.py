@@ -80,4 +80,7 @@ def order_create(request):
 # View para exibir o pedido criado
 def order_created(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    return render(request, 'orders/order_created.html', {'order': order})
+
+    # calcular o total do pedido (item + frete)
+    total = sum(item.price * item.quantity for item in order.items.all()) + order.shipping_cost
+    return render(request, 'orders/order_created.html', {'order': order, 'total': total})
