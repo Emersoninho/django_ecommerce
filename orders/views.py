@@ -2,40 +2,54 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Order, OrderItem
 from .forms import AddressForm
 from cart.cart import Cart
-from .utils import process_payment_with_mercadopago
-from django.conf import settings
+from .utils import process_payment_with_mercadopago, calculate_shipping_cost_fixed
 
+# Tabela de frete fixo por estado (exemplo)
+FRETE_FIXO_POR_ESTADO = {
+    'SP': 15.00,
+    'RJ': 20.00,
+    'MG': 18.00,
+    'PE': 10.00,
+    'OUTROS': 25.00,  # Valor padrão
+}
+
+# Função para calcular o frete
+def calcular_frete(address):
+    estado = address.state
+    cidade = address.city.lower()
+
+    # Exemplo de cálculo por estado
+    frete = FRETE_FIXO_POR_ESTADO.get(estado, FRETE_FIXO_POR_ESTADO['OUTROS'])
+
+    # Exemplo de ajuste para cidades específicas
+    if cidade in ['carpina', 'recife']:
+        distancia = 15  # Exemplo de distância fictícia em km
+        if distancia <= 10:
+            frete = 5.00
+        elif distancia <= 20:
+            frete = 10.00
+        elif distancia <= 50:
+            frete = 15.00
+        else:
+            frete = 20.00
+
+    return frete
+
+# View para criar o pedido
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
         form = AddressForm(request.POST)
         if form.is_valid():
-            # Salva o endereço do cliente
+            # Salva o endereço
             address = form.save()
+            # Cria o pedido
             order = Order.objects.create(address=address)
 
-            # Simula o cálculo da distância (usando um valor fixo por enquanto, como exemplo)
-            origin = 'Paudalho, PE'  # Endereço da loja
-            destination = f'{address.address_line}, {address.city}, {address.state}'  # Endereço do cliente
-
-            # Calcular a distância (exemplo com valores simulados)
-            # Vamos simular que a distância seja calculada entre os dois pontos.
-            # Para fins de exemplo, vamos assumir algumas distâncias fictícias.
-            # Isso deve ser substituído por um cálculo real (API de geolocalização ou outro método).
-            distance = 15  # Simulando uma distância de 15 km
-            if distance is not None:
-                if distance <= 10:
-                    shipping_cost = 5.00
-                elif distance <= 20:
-                    shipping_cost = 10.00
-                else:
-                    shipping_cost = 15.00
-            else:
-                shipping_cost = 20.00  # Valor padrão em caso de erro
-
-            # Atribui o custo de entrega ao pedido
+            # Calcula o frete
+            shipping_cost = calculate_shipping_cost_fixed(address.zipcode, '55825000')
             order.shipping_cost = shipping_cost
-            order.save()
+            
 
             # Adiciona os itens do carrinho ao pedido
             for item in cart:
@@ -50,7 +64,8 @@ def order_create(request):
             payment_method = request.POST.get('payment_method')
             payment_response = process_payment_with_mercadopago(order, payment_method)
 
-            if 'id' in payment_response:
+            # Verifica o pagamento
+            if payment_response and 'id' in payment_response:
                 order.paid = True
                 order.save()
                 cart.clear()
@@ -62,6 +77,7 @@ def order_create(request):
 
     return render(request, 'orders/order_create.html', {'cart': cart, 'form': form})
 
+# View para exibir o pedido criado
 def order_created(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     return render(request, 'orders/order_created.html', {'order': order})

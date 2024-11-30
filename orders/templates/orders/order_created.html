@@ -1,38 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-</head>
-<body>
-    <h1>Pedido Confirmado</h1>
-    <p>Obrigado por sua compra!</p>
-    <h2>Detalhes do Pedido</h2>
-    <ul>
-        <li><strong>ID do Pedido:</strong> {{ order.id }}</li>
-        <li><strong>Data:</strong> {{ order.created }}</li>
-        <li><strong>Total:</strong> R$ {{ order.get_total_cost }}</li>
-        <li><strong>Nome:</strong>{{ order.address.first_name }} {{order.address.last_name}}</li>
-        <li><strong>Endereço:</strong> {{ order.address.address_line }}</li>
-        <li><strong>Cidade:</strong>{{ order.address.city }}</li>
-        <li><strong>Status:</strong>
-        <p><strong>Frete estimado:</strong> R$ <span id="shipping-cost">0.00</span></p>
-
-            {% if order.paid %}
-                Pago
-            {% else %}
-                Pendente
-            {% endif %}
-        </li>
-    </ul>
-    <h3>Itens do Pedido:</h3>
-    <ul>
-        {% for item in order.items.all %}
-        <li>{{ item.product.name }} - {{ item.quantity }} x R$ {{ item.price }} = R$ {{ item.get_cost }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+<h3>Detalhes do Pedido</h3>
+<p>ID do Pedido: {{ order.id }}</p>
+<p>Total do Pedido: R$ {{ order.get_total_cost }}</p>
+<p>Frete: R$ {{ order.shipping_cost }}</p>
 
 

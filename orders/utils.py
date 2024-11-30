@@ -1,6 +1,5 @@
-import mercadopago  # type: ignore
+import mercadopago
 from django.conf import settings
-import googlemaps
 
 def process_payment_with_mercadopago(order, payment_method):
     sdk = mercadopago.SDK(settings.MERCADO_PAGO_ACCESS_TOKEN)
@@ -33,7 +32,7 @@ def process_payment_with_mercadopago(order, payment_method):
             'failure': f'{site_url}/orders/create/',
             'pending': f'{site_url}/orders/created/{order.id}',
         },
-        'auto_return': 'approved', # retorna automaticamente para a url de sucesso
+        'auto_return': 'approved',  # Retorna automaticamente para a URL de sucesso
     }
 
     # Condições para tipos de pagamento excluídos
@@ -51,33 +50,21 @@ def process_payment_with_mercadopago(order, payment_method):
         payment_url = preference_response['response']['init_point']
         return payment_url
     else:
-        # Caso a criação da preferência falhe
+        print(f'Erro ao criar preferência: {preference_response}')
         return None
-    
-def calculate_distance(origin, destination):
-    gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
 
-    try:
-        directions_result = gmaps.distance_matrix(
-            origins=[origin],
-            destinations=[destination],
-            mode="driving"
-        )
-        
-        # Verifique a resposta
-        print(f"Resposta da API do Google Maps: {directions_result}")
-        
-        # Extrair a distância em metros (se disponível)
-        distance_data = directions_result['rows'][0]['elements'][0]
-        
-        if 'distance' in distance_data:
-            distance = distance_data['distance']['value'] / 1000  # Converte para km
-            duration = distance_data['duration']['value'] / 60  # Tempo em minutos
-            print(f"Distância: {distance} km, Duração: {duration} minutos")
-            return distance, duration
-        else:
-            print("Erro: distância não encontrada na resposta.")
-            return None, None
-    except Exception as e:
-        print(f"Erro ao calcular a distância: {e}")
-        return None, None
+def calculate_shipping_cost_fixed(origin_cep, destination_cep):
+    """
+    Calcula o custo do frete com base em uma lógica fixa.
+
+    :param origin_cep: CEP de origem
+    :param destination_cep: CEP de destino
+    :return: Preço do frete
+    """
+    # Exemplo de lógica de frete com base em prefixos de CEP
+    if origin_cep[:2] == destination_cep[:2]:  # Mesmo estado
+        return 10.00
+    elif origin_cep[:1] == destination_cep[:1]:  # Regiões próximas
+        return 20.00
+    else:  # Outras regiões
+        return 30.00
