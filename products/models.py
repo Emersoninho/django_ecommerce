@@ -27,6 +27,7 @@ class Product(models.Model):
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
 
+
     class Meta:
         ordering = ['-created']
 

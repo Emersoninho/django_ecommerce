@@ -1,0 +1,43 @@
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<h1>Carrinho de Compras</h1>
+
+{% if cart %}
+    <ul>
+        {% for item in cart %}
+            <li>
+                {{ item.product.name }} - 
+                <a href="{% url 'cart:cart_update' item.product.id 'decrement' %}">-</a>
+                {{ item.quantity }}
+                <a href="{% url 'cart:cart_update' item.product.id 'increment' %}">+</a>
+                x R$ {{ item.price }} = R$ {{ item.total_price }}
+                <a href="{% url 'cart:cart_remove' item.product.id %}">Remover</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Total: R$ {{ cart.get_total_price|floatformat:2 }}</strong></p>
+    <a href="/">Continuar comprando</a>
+
+    {% if cart.get_total_price > 0 %}
+        <h2>Finalizar Compra</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Confirmar Compra</button>
+        </form>
+    {% else %}
+        <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
+    {% endif %}
+{% else %}
+    <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
+{% endif %}
+
