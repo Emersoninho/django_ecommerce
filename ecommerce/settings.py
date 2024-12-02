@@ -27,12 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CART_SESSION_ID = 'cart'
+# Redireciona após login
+LOGIN_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o login
 
-# redirecionado apos o login
-LOGIN_REDIRECT_URL = 'home:home'
-# sair da página
-LOGOUT_REDIRECT_URL = '/logout_confirmation/'
+# Redireciona após logout
+LOGOUT_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o logout
+
+
 
 # URL base do site
 SITE_URL = "http://127.0.0.1:8000"  
@@ -68,6 +69,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 
 ROOT_URLCONF = 'ecommerce.urls'
 
