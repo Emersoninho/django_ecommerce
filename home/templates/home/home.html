@@ -6,8 +6,28 @@
     <title>Página Inicial</title>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/cart/">Carrinho</a></li>
+                <li><a href="/checkout/">Checkout</a></li>
+
+                <!-- Navegação condicional com base na autenticação do usuário -->
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'accounts:logout' %}">Sair</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Registrar</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
     <h1>Bem-vindo à nossa loja!</h1>
     <p>Confira nossos produtos abaixo.</p>
     <a href="/products/">Ver produtos</a>
 </body>
 </html>
+
+

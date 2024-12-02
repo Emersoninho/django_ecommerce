@@ -25,7 +25,7 @@ def checkout(request):
             messages.error(request, 'Por favor, corrija os erros no formulário.')
     else:
         form = CheckoutForm()
-    return render(request, 'cart_checkout.html', {'cart': cart, 'form': form})
+    return render(request, 'checkout/cart_checkout.html', {'cart': cart, 'form': form})
 
 def success(request):
     """Página de sucesso após a compra."""

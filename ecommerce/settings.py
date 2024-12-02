@@ -29,6 +29,11 @@ ALLOWED_HOSTS = []
 
 CART_SESSION_ID = 'cart'
 
+# redirecionado apos o login
+LOGIN_REDIRECT_URL = 'home:home'
+# sair da página
+LOGOUT_REDIRECT_URL = '/logout_confirmation/'
+
 # URL base do site
 SITE_URL = "http://127.0.0.1:8000"  
 
@@ -69,7 +74,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templaes'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,6 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
 MEDIA_URL = '/media/'
