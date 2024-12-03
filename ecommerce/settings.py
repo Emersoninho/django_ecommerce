@@ -28,10 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Redireciona após login
-LOGIN_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o login
+#LOGIN_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o login
 
 # Redireciona após logout
-LOGOUT_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o logout
+#LOGOUT_REDIRECT_URL = '/'  # Ou qualquer página que você queira após o logout
 
 
 
