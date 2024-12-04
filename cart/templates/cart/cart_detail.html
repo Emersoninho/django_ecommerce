@@ -1,18 +1,33 @@
 <h1>Carrinho de Compras</h1>
 
-{% if cart|length %}
+{% if cart %}
     <ul>
         {% for item in cart %}
             <li>
-                {{ item.product.name }} - {{ item.quantity }} x R$ {{ item.price }} = R$ {{ item.total_price }}
+                {{ item.product.name }} - 
+                <a href="{% url 'cart:cart_update' item.product.id 'decrement' %}">-</a>
+                {{ item.quantity }}
+                <a href="{% url 'cart:cart_update' item.product.id 'increment' %}">+</a>
+                x R$ {{ item.price }} = R$ {{ item.total_price }}
                 <a href="{% url 'cart:cart_remove' item.product.id %}">Remover</a>
             </li>
         {% endfor %}
     </ul>
 
-    <p>Total: R$ {{ cart.get_total_price }}</p>
+    <p><strong>Total: R$ {{ cart.get_total_price|floatformat:2 }}</strong></p>
+    <a href="/">Continuar comprando</a>
 
-    <a href="{% url 'cart:cart_clear' %}">Esvaziar carrinho</a>
+    {% if cart.get_total_price > 0 %}
+        <h2>Finalizar Compra</h2>
+        <!-- Formulário para finalizar a compra -->
+        <form method="post" action="{% url 'checkout:checkout' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Confirmar Compra</button>
+        </form>
+    {% else %}
+        <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
+    {% endif %}
 {% else %}
-    <p>Seu carrinho está vazio.</p>
+    <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
 {% endif %}

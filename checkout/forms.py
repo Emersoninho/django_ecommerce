@@ -1,15 +1,23 @@
 from django import forms
+from .models import Order
 
-class CheckoutForm(forms.Form):
+class CheckoutForm(forms.ModelForm):
     PAYMENT_CHOICES = [
         ('credit_card', 'Cartão de Crédito'),
         ('pix', 'Pix'),
         ('boleto', 'Boleto Bancário'),
     ]
 
-    full_name = forms.CharField(label='Nome Completo', max_length=100)
-    email = forms.EmailField(label='E-mail')
-    address = forms.CharField(label='Endereço Completo', max_length=255)
-    postal_code = forms.CharField(label='CEP', max_length=20)
-    city = forms.CharField(label='Cidade', max_length=100)
-    payment_method = forms.ChoiceField(label='Método de Pagamento', choices=PAYMENT_CHOICES)
+    STATE_CHOICES = [
+        ('SP', 'São Paulo'),
+        ('RJ', 'Rio de Janeiro'),
+        ('MG', 'Minas Gerais'),
+        ('PE', 'Pernambuco'),
+    ]
+
+    payment_method = forms.ChoiceField(choices=PAYMENT_CHOICES, label='Método de Pagamento')
+    state = forms.ChoiceField(choices=STATE_CHOICES, label='Estado')  # Novo campo de estado
+
+    class Meta:
+        model = Order
+        fields = ['full_name', 'email', 'address', 'postal_code', 'city', 'state', 'payment_method']
