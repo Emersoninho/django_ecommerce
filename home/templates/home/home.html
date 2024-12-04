@@ -12,13 +12,15 @@
                 <li><a href="/">Início</a></li>
                 <li><a href="/cart/">Carrinho</a></li>
                 <li><a href="/checkout/">Checkout</a></li>
+                <li><a href="/products/">Produtos</a></li>
 
                 <!-- Navegação condicional com base na autenticação do usuário -->
                 {% if user.is_authenticated %}
+                    Olá, {{ user.username }}
                     <li><a href="{% url 'accounts:logout' %}">Sair</a></li>
                 {% else %}
                     <li><a href="{% url 'accounts:login' %}">Login</a></li>
-                    <li><a href="{% url 'accounts:register' %}">Registrar</a></li>
+                    {% comment %} <li><a href="{% url 'accounts:register' %}">Registrar</a></li> {% endcomment %}
                 {% endif %}
             </ul>
         </nav>
