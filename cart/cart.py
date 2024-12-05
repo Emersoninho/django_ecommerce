@@ -57,7 +57,7 @@ class Cart:
 
     def get_total_price(self):
         """Calcula o preço total dos itens no carrinho."""
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+        return float(sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values()))
 
     def clear(self):
         """Esvazia o carrinho."""

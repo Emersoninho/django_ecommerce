@@ -17,7 +17,8 @@ class CheckoutForm(forms.ModelForm):
 
     payment_method = forms.ChoiceField(choices=PAYMENT_CHOICES, label='Método de Pagamento')
     state = forms.ChoiceField(choices=STATE_CHOICES, label='Estado')  # Novo campo de estado
+    freight = forms.DecimalField(widget=forms.HiddenInput(), required=True)
 
     class Meta:
         model = Order
-        fields = ['full_name', 'email', 'address', 'postal_code', 'city', 'state', 'payment_method']
+        fields = ['full_name', 'email', 'address', 'postal_code', 'city', 'state', 'payment_method', 'freight']

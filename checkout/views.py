@@ -3,61 +3,74 @@ from cart.cart import Cart
 from .forms import CheckoutForm
 from .models import Order, OrderItem
 from django.contrib import messages
+from decimal import Decimal
 
 def calcular_frete(estado):
     fretes = {
-        'SP': 10.00,
-        'RJ': 15.00,
-        'MG': 20.00,
-        'PE': 5.00,
+        'SP': Decimal(10.00),
+        'RJ': Decimal(15.00),
+        'MG': Decimal(20.00),
+        'PE': Decimal(5.00),
     }
-    return fretes.get(estado, 30.00) # frete sem estado definido
-
+    return float(fretes.get(estado, Decimal(30.00)))  # Retorna como float diretamente
 
 def checkout(request):
     """Exibe o checkout e processa a compra."""
     cart = Cart(request)
+    freight = 0.00
+    total_price = float(cart.get_total_price())  # Garante que o total seja float
+
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
             state = form.cleaned_data['state']
-            freight = calcular_frete(state)
+            freight = calcular_frete(state)  # Calcula o frete
+            total_price += freight  # Calcula o total com frete
 
-            # calcular o total do campo, incluindo o frete
-            total_price = cart.get_total_price() + freight
-
-            # Cria um pedido manualmente usando os dados do formulário
+            # Cria o pedido
             order = Order.objects.create(
-                full_name = form.cleaned_data['full_name'],
-                email = form.cleaned_data['email'],
-                address = form.cleaned_data['address'],
-                postal_code = form.cleaned_data['postal_code'],
-                city = form.cleaned_data['city'],
-                state = state,
-                payment_method = form.cleaned_data['payment_method'],
-                freight = freight,
-                total_price = total_price,
+                full_name=form.cleaned_data['full_name'],
+                email=form.cleaned_data['email'],
+                address=form.cleaned_data['address'],
+                postal_code=form.cleaned_data['postal_code'],
+                city=form.cleaned_data['city'],
+                state=state,
+                payment_method=form.cleaned_data['payment_method'],
+                freight=Decimal(freight),  # Salva como Decimal no banco
+                total_price=Decimal(total_price),  # Salva como Decimal no banco
             )
-            
-            # Adiciona os itens do carrinho ao pedido
+
+            # Adiciona itens do carrinho ao pedido
             for item in cart:
-                OrderItem.objects.create(order=order, 
-                    product=item['product'], 
-                    price=item['price'], 
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product'],
+                    price=item['price'],
                     quantity=item['quantity'],
                 )
-                
-            # Mensagem de sucesso e redireciona para a página de sucesso
-            cart.clear()
 
-            # redericiona para a página de sucesso
+            # Limpa o carrinho e redireciona para sucesso
+            cart.clear()
             messages.success(request, 'Compra realizada com sucesso!')
-            return redirect('checkout:success')  # Redireciona para a página de sucesso
+            return redirect('checkout:success')
+
         else:
             messages.error(request, 'Por favor, corrija os erros no formulário.')
+
     else:
         form = CheckoutForm()
-    return render(request, 'checkout/cart_checkout.html', {'cart': cart, 'form': form})
+
+    # Envia os valores ao template
+    return render(
+        request,
+        'checkout/cart_checkout.html',
+        {
+            'cart': cart,
+            'form': form,
+            'freight': freight,  # Valor já é float
+            'total_price': total_price,  # Valor já é float
+        },
+    )
 
 def success(request):
     """Página de sucesso após a compra."""

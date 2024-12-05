@@ -1,37 +1,19 @@
-<h1>Carrinho de Compras</h1>
+<h1>Resumo do Pedido</h1>
+<ul>
+    {% for item in cart %}
+        <li>
+            {{ item.product.name }}: {{ item.quantity }} x R$ {{ item.price|floatformat:2 }} = R$ {{ item.total_price|floatformat:2 }}
+        </li>
+    {% endfor %}
+</ul>
 
-{% if cart %}
-    <ul>
-        {% for item in cart %}
-            <li>
-                {{ item.product.name }} - 
-                <a href="{% url 'cart:cart_update' item.product.id 'decrement' %}">-</a>
-                {{ item.quantity }}
-                <a href="{% url 'cart:cart_update' item.product.id 'increment' %}">+</a>
-                x R$ {{ item.price }} = R$ {{ item.total_price }}
-                <a href="{% url 'cart:cart_remove' item.product.id %}">Remover</a>
-            </li>
-        {% endfor %}
-    </ul>
+<p>Subtotal: R$ {{ total_price|floatformat:2 }}</p>
+<p>Frete: R$ {{ freight|floatformat:2 }}</p>
+<p><strong>Total com Frete: R$ {{ total_price|floatformat:2 }}</strong></p>
 
-    <p><strong>Total: R$ {{ cart.get_total_price|floatformat:2 }}</strong></p>
+<form method="post" action="{% url 'checkout:checkout' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Confirmar Compra</button>
+</form>
 
-    <p><strong>Frete: R$ {{ form.cleaned_data.state|default:0.00|floatformat:2 }}</strong></p>
-
-    <p><strong>Total Final (com frete): R$ {{ cart.get_total_price + form.cleaned_data.freight|floatformat:2 }}</strong></p>
-
-    <a href="/">Continuar comprando</a>
-
-    {% if cart.get_total_price > 0 %}
-        <h2>Finalizar Compra</h2>
-        <form method="post" action="{% url 'checkout:checkout' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Confirmar Compra</button>
-        </form>
-    {% else %}
-        <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
-    {% endif %}
-{% else %}
-    <p>Seu carrinho está vazio. Adicione produtos para continuar.</p>
-{% endif %}
